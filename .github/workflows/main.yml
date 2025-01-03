@@ -47,21 +47,20 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: production
         REPOSITORY: django-app 
-      run: |
+      run: 
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT    
-
+          docker build -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./django/build-process/docker-backend-django/Dockerfile .          docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+      
    deploy:
-    name: Deploy
-    runs-on: self-hosted
+     name: Deploy
+     runs-on: self-hosted
   
-    needs: build-and-push
+     needs: build-and-push
   
-    steps:
+     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
